@@ -9,7 +9,9 @@ pip install -r requirements.txt
 
 ## Run scripts
 
-Run server:
+As a good practice I recommend you that work in a virtual enviorement
+
+Run script:
 ```sh
 python <name_of_the_script>.py
 ```
