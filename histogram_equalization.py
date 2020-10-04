@@ -9,9 +9,9 @@ def get_histogram(img):
     """Return the histogram of a grayscale image.
 
     img: numpy array [n, m, 1]
-    returns: numpy array [256, 1, 1]
+    return: numpy array [256, 1, 1]
     """
-    [rows, columns] = img.shape
+    rows, columns = img.shape
 
     histogram = np.zeros(256)
 
@@ -23,52 +23,79 @@ def get_histogram(img):
     return histogram
 
 
-def histogram_equalization(img):
-    """
-    Return the graph and image of the histogram equalization.
+def get_cumulative_distribution(img):
+    """Return the cumulative distributuion of a grayscale image.
 
     img: numpy array [n, m, 1]
-    return: graph, numpy array to plot as graph [256, 1, 1]
-            output, numpy array to plot as image [n, m, 1]
+    return: numpy array to plot as graph [256, 1, 1]
     """
     rows, columns = img.shape
-
-    histogram = get_histogram(img)
 
     probability = np.zeros(256)
     probability = histogram / (rows * columns)
 
     cumulative_dist = probability.cumsum()
 
-    output = np.zeros((rows, columns))
+    return cumulative_dist
+
+
+def histogram_equalization(img):
+    """Return the graph and image of the histogram equalization.
+
+    img: numpy array [n, m, 1]
+    return: output, numpy array to plot as image [n, m, 1]
+    """
+    rows, columns = img.shape
+
+    cumulative_dist = get_cumulative_distribution(img)
+
+    output = np.zeros((rows, columns), dtype='uint8')
 
     for row in range(rows):
         for column in range(columns):
             position = img[row, column]
-            output[row, column] = np.uint8(cumulative_dist[position] * 255)
+            output[row, column] = cumulative_dist[position] * 255
 
-    return cumulative_dist, output
+    return output
 
+
+# Original data
 
 img = data.camera()
-
 histogram = get_histogram(img)
-cumulative_dist, he_img = histogram_equalization(img)
+cumulative_dist = get_cumulative_distribution(img)
+# Normalize cumulative distribution
+cumulative_dist *= (histogram.max() / cumulative_dist.max())
 
-plt.figure(1)
+# HE data
+
+he_img = histogram_equalization(img)
+he_histogram = get_histogram(he_img)
+he_cumulative_dist = get_cumulative_distribution(he_img)
+# Normalize cumulative distribution
+he_cumulative_dist *= (he_histogram.max() / he_cumulative_dist.max())
+
+# Plot images
+
+fig1, axs1 = plt.subplots(1, 2)
 # Plot the original image
-plt.imshow(img, cmap="gray")
-
-plt.figure(2)
-# Plot the histogram of the original image
-plt.plot(histogram)
-
-plt.figure(3)
-# Plot the cumulative distribution function of the original image
-plt.plot(cumulative_dist)
-
-plt.figure(4)
+axs1[0].imshow(img, cmap="gray")
+axs1[0].set_title('Original Image')
 # Plot the image after histogram equalization
-plt.imshow(he_img, cmap="gray")
+axs1[1].imshow(he_img, cmap="gray")
+axs1[1].set_title('HE Image')
+
+# Plot histograms and cumulative distributions
+fig2, axs2 = plt.subplots(1, 2)
+# Plot the histogram and cumulative distribution of the original image
+axs2[0].plot(histogram, color='r')
+axs2[0].plot(cumulative_dist, color='b')
+axs2[0].set_title('Original Image')
+axs2[0].legend(('histogram', 'cdf'), loc='upper left')
+# Plot the image after histogram equalization
+axs2[1].plot(he_histogram, color='r')
+axs2[1].plot(he_cumulative_dist, color='b')
+axs2[1].set_title('HE Image')
+axs2[1].legend(('histogram', 'cdf'), loc='upper left')
 
 plt.show()
