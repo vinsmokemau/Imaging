@@ -1,4 +1,4 @@
-"""Get the Histogram of an Image."""
+"""Histogram Equalization of an Image."""
 from skimage import data
 
 import numpy as np
@@ -40,7 +40,7 @@ def get_cumulative_distribution(img):
 
 
 def histogram_equalization(img):
-    """Return the graph and image of the histogram equalization.
+    """Return the image after a histogram equalization.
 
     img: numpy array [n, m, 1]
     return: output, numpy array to plot as image [n, m, 1]
@@ -86,6 +86,7 @@ axs1[1].imshow(he_img, cmap="gray")
 axs1[1].set_title('HE Image')
 
 # Plot histograms and cumulative distributions
+
 fig2, axs2 = plt.subplots(1, 2)
 # Plot the histogram and cumulative distribution of the original image
 axs2[0].plot(histogram, color='r')
