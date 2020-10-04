@@ -31,44 +31,44 @@ def histogram_equalization(img):
     return: graph, numpy array to plot as graph [256, 1, 1]
             output, numpy array to plot as image [n, m, 1]
     """
-    [rows, columns] = img.shape
+    rows, columns = img.shape
 
     histogram = get_histogram(img)
 
     probability = np.zeros(256)
     probability = histogram / (rows * columns)
 
-    hist_equalization = probability.cumsum()
+    cumulative_dist = probability.cumsum()
 
     output = np.zeros((rows, columns))
 
     for row in range(rows):
         for column in range(columns):
             position = img[row, column]
-            output[row, column] = np.uint8(hist_equalization[position] * 255)
+            output[row, column] = np.uint8(cumulative_dist[position] * 255)
 
-    return hist_equalization, output
+    return cumulative_dist, output
 
 
 img = data.camera()
 
 histogram = get_histogram(img)
-he_graph, he_img = histogram_equalization(img)
+cumulative_dist, he_img = histogram_equalization(img)
 
 plt.figure(1)
-# Plot image
+# Plot the original image
 plt.imshow(img, cmap="gray")
 
 plt.figure(2)
-# Plot the img histogram
+# Plot the histogram of the original image
 plt.plot(histogram)
 
 plt.figure(3)
-# Plot the histogram equalization
-plt.plot(he_graph)
+# Plot the cumulative distribution function of the original image
+plt.plot(cumulative_dist)
 
 plt.figure(4)
-# Plot the image after hostogram equalization
+# Plot the image after histogram equalization
 plt.imshow(he_img, cmap="gray")
 
 plt.show()
