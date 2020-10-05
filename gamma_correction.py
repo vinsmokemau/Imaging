@@ -1,35 +1,35 @@
-"""Min Max Contrasting of an Image."""
+"""Histogram Equalization of an Image."""
 from skimage import data
 
 import numpy as np
 import matplotlib.pyplot as plt
 
 
-def get_histogram(image):
+def get_histogram(img):
     """Return the histogram of a grayscale image.
 
-    image: numpy array [n, m, 1]
-    returns: numpy array [256, 1, 1]
+    img: numpy array [n, m, 1]
+    return: numpy array [256, 1, 1]
     """
-    rows, columns = image.shape
+    rows, columns = img.shape
 
     histogram = np.zeros(256)
 
     for row in range(rows):
         for column in range(columns):
-            position = image[row, column]
+            position = img[row, column]
             histogram[position] += 1
 
     return histogram
 
 
-def get_cumulative_distribution(image):
+def get_cumulative_distribution(img):
     """Return the cumulative distributuion of a grayscale image.
 
-    image: numpy array [n, m, 1]
+    img: numpy array [n, m, 1]
     return: numpy array to plot as graph [256, 1, 1]
     """
-    rows, columns = image.shape
+    rows, columns = img.shape
 
     probability = np.zeros(256)
     probability = histogram / (rows * columns)
@@ -39,23 +39,19 @@ def get_cumulative_distribution(image):
     return cumulative_dist
 
 
-def min_max_contrasting(image):
-    """Return the image after a min max contrasting.
+def gamma_correction(img, gamma):
+    """Return the image after a gamma correction.
 
-    image: numpy array [n, m, 1]
-    return: output, numpy array to plot as image [n, m, 1]
+    img: numpy array [n, m, 1]
+    return: numpy array to plot as graph [256, 1, 1]
     """
-    rows, columns = image.shape
+    rows, columns = img.shape
 
     output = np.zeros((rows, columns), dtype='uint8')
 
-    # Loop over the image and apply Min-Max Contrasting
-    image_min = np.min(image)
-    image_max = np.max(image)
-
     for row in range(rows):
         for column in range(columns):
-            output[row, column] = 255 * ((image[row, column] - image_min) / (image_max - image_min))
+            output[row, column] = (img[row, column] ** gamma) * 255
 
     return output
 
@@ -68,13 +64,13 @@ cumulative_dist = get_cumulative_distribution(img)
 # Normalize cumulative distribution
 cumulative_dist *= (histogram.max() / cumulative_dist.max())
 
-# Min Max Contrasting data
+# Gamma Correction data
 
-mmc_img = min_max_contrasting(img)
-mmc_histogram = get_histogram(mmc_img)
-mmc_cumulative_dist = get_cumulative_distribution(mmc_img)
+gc_img = gamma_correction(img, 0.5)
+gc_histogram = get_histogram(gc_img)
+gc_cumulative_dist = get_cumulative_distribution(gc_img)
 # Normalize cumulative distribution
-mmc_cumulative_dist *= (mmc_histogram.max() / mmc_cumulative_dist.max())
+gc_cumulative_dist *= (gc_histogram.max() / gc_cumulative_dist.max())
 
 # Plot images
 
@@ -83,8 +79,8 @@ fig1, axs1 = plt.subplots(1, 2)
 axs1[0].imshow(img, cmap="gray")
 axs1[0].set_title('Original Image')
 # Plot the image after histogram equalization
-axs1[1].imshow(mmc_img, cmap="gray")
-axs1[1].set_title('MMC Image')
+axs1[1].imshow(gc_img, cmap="gray")
+axs1[1].set_title('GC Image')
 
 # Plot histograms and cumulative distributions
 
@@ -95,9 +91,9 @@ axs2[0].plot(cumulative_dist, color='b')
 axs2[0].set_title('Original Image')
 axs2[0].legend(('histogram', 'cdf'), loc='upper left')
 # Plot the image after histogram equalization
-axs2[1].plot(mmc_histogram, color='r')
-axs2[1].plot(mmc_cumulative_dist, color='b')
-axs2[1].set_title('MMC Image')
+axs2[1].plot(gc_histogram, color='r')
+axs2[1].plot(gc_cumulative_dist, color='b')
+axs2[1].set_title('GC Image')
 axs2[1].legend(('histogram', 'cdf'), loc='upper left')
 
 plt.show()

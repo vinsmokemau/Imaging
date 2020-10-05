@@ -61,7 +61,7 @@ def histogram_equalization(img):
 
 # Original data
 
-img = data.camera()
+img = data.moon()
 histogram = get_histogram(img)
 cumulative_dist = get_cumulative_distribution(img)
 # Normalize cumulative distribution
