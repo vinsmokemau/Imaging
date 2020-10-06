@@ -1,5 +1,5 @@
 """Fuzzy Image Enhancement."""
-from skimage import data
+from skimage import data, io
 import skfuzzy as fuzz
 
 import numpy as np
@@ -18,7 +18,7 @@ gray = fuzz.gbellmf(pixels, 55, 3, 128)
 
 # Singletons values
 s1 = 30
-s2 = 120
+s2 = 50
 s3 = 220
 
 new_gray = np.zeros(256)
@@ -35,6 +35,9 @@ for row in range(rows):
     for column in range(columns):
         value = img[row, column]
         fhe[row, column] = new_gray[value]
+
+# Save the image
+# io.imsave('test.jpg', fhe)
 
 plt.figure(1)
 plt.plot(dark)
