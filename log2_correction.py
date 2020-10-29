@@ -1,5 +1,5 @@
 """Logarithm Base 2 Correction of an Image."""
-from skimage import data
+from skimage import data, color, io
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -58,7 +58,7 @@ def log2_correction(img):
 
 # Original data
 
-img = data.moon()
+img = np.uint8(color.rgb2gray(io.imread('img/img1.jpeg')) * 255)
 histogram = get_histogram(img)
 cumulative_dist = get_cumulative_distribution(img)
 # Normalize cumulative distribution

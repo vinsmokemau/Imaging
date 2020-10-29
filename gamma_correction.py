@@ -1,5 +1,5 @@
 """Histogram Equalization of an Image."""
-from skimage import data
+from skimage import data, color, io
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -58,7 +58,7 @@ def gamma_correction(img, gamma):
 
 # Original data
 
-img = data.moon()
+img = np.uint8(color.rgb2gray(io.imread('img/img1.jpeg')) * 255)
 histogram = get_histogram(img)
 cumulative_dist = get_cumulative_distribution(img)
 # Normalize cumulative distribution
@@ -66,7 +66,7 @@ cumulative_dist *= (histogram.max() / cumulative_dist.max())
 
 # Gamma Correction data
 
-gc_img = gamma_correction(img, 0.5)
+gc_img = gamma_correction(img, 0.05)
 gc_histogram = get_histogram(gc_img)
 gc_cumulative_dist = get_cumulative_distribution(gc_img)
 # Normalize cumulative distribution

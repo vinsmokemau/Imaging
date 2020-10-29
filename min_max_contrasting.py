@@ -1,5 +1,5 @@
 """Min Max Contrasting of an Image."""
-from skimage import data
+from skimage import data, color, io
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -50,8 +50,8 @@ def min_max_contrasting(image):
     output = np.zeros((rows, columns), dtype='uint8')
 
     # Loop over the image and apply Min-Max Contrasting
-    image_min = np.min(image)
-    image_max = np.max(image)
+    image_min = np.min(image) * 1.1
+    image_max = np.max(image) // 1.1
 
     for row in range(rows):
         for column in range(columns):
@@ -62,7 +62,7 @@ def min_max_contrasting(image):
 
 # Original data
 
-img = data.moon()
+img = np.uint8(color.rgb2gray(io.imread('img/img1.jpeg')) * 255)
 histogram = get_histogram(img)
 cumulative_dist = get_cumulative_distribution(img)
 # Normalize cumulative distribution
